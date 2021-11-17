@@ -57,7 +57,7 @@ exports.up = function(knex) {
       table.decimal("base_profit", null)
 
       // unique id of the bot that this trade is for
-      table.uuid("bot_id").notNullable()
+      table.integer("bot_id").notNullable()
       table.foreign("bot_id")
         .references("id")
         .inTable("bots")

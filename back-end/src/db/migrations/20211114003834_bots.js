@@ -1,14 +1,8 @@
 
 exports.up = function(knex) {
   return knex.schema.createTable("bots", (table) => {
-    // unique id for the bot to prevent problems when calculating profitability
-
-    // ex: I create a bot, it gets a couple trades off, I delete it, then create a new bot
-    // the will share the same incremented id assuming I didnt make any new bots between them,
-    // this creates a problem, because now trades with a status of complete have a foreign key
-    // pointing to a bot that exists but wasnt the bot that the trade belonged to. Now, instead,
-    // using this uuid as the foreign key reference, I know this kind of confusion wont happen
-    table.uuid("id").primary()
+    // id of the bot
+    table.increments("id").primary()
 
     // status of the bot, bots will start with a status of created and must be started manually
     // options: created, active, paused, archived
@@ -42,7 +36,7 @@ exports.up = function(knex) {
     table.decimal("percent_safety_order", null).unsigned()
 
     // how many times the bot will average down
-    table.integer("times_to_average_down").unsigned()
+    table.integer("max_safety_orders").unsigned()
 
     // max leverage the bot is allowed to use
     table.integer("max_leverage").unsigned()
@@ -77,14 +71,19 @@ exports.up = function(knex) {
     // hours the bot has been active
     table.integer("hours_active")
 
-    // total trades completed
-    table.integer("trades_completed").unsigned().defaultTo(0)
-
     // total net quote currency or dollars gained through all trades
     table.decimal("lifetime_quote_profit", null).unsigned().defaultTo(0)
 
     // total base currency or asset gained through all trades
     table.decimal("lifetime_base_profit", null).unsigned().defaultTo(0)
+
+    // for crypto strategies, this is the exchange id the bot should run on
+    // for arbitrage strategies, this should stay null, as it will look at price data on every exchange
+    // it has API keys for
+    table.integer("exchange_id").unsigned()
+    table.foreign("exchange_id")
+        .references("id")
+        .inTable("exchanges")
   })
 };
 

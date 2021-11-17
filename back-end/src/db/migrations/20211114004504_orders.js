@@ -66,7 +66,7 @@ exports.up = function(knex) {
         .inTable("trades")
 
       // exchange the order is on
-      table.uuid("exchange_id").notNullable()
+      table.integer("exchange_id").notNullable()
       table.foreign("exchange_id")
         .references("id")
         .inTable("exchanges")

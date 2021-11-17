@@ -1,8 +1,8 @@
 
 exports.up = function(knex) {
   return knex.schema.createTable("exchanges", (table) => {
-    // unique ID of the exchange
-    table.uuid("id").primary()
+    // ID of the exchange
+    table.increments("id").primary()
 
     // string of the exchange name
     table.string("exchange").notNullable()
